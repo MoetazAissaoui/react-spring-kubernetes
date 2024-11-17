@@ -1,31 +1,27 @@
-# Use a newer base image with Node.js 16
-FROM node:16
+# Use a newer Debian-based Node.js image (Buster or Bullseye)
+FROM node:12-buster as build
 
 # Set working directory
 WORKDIR /app/
 
-# Add `/app/node_modules/.bin` to $PATH
-ENV PATH /app/node_modules/.bin:$PATH
-
-# Install nginx
-RUN apt-get update && apt-get install -y nginx
-
-# Configure nginx
-COPY nginx.conf /etc/nginx/sites-available/default
-RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf
-
-# Install app dependencies
+# Install app dependencies and build the React app
 COPY ./ /app/
 RUN yarn install
 RUN yarn build
 
-# Copy the build files to the nginx public directory
-RUN cp -R build/* /var/www/html/
+# Production stage
+FROM nginx:alpine
 
-# Forward request and error logs to Docker log collector
-RUN ln -sf /dev/stdout /var/log/nginx/access.log \
-    && ln -sf /dev/stderr /var/log/nginx/error.log
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/sites-available/default
 
+# Ensure nginx runs in the foreground
+RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf
+
+# Copy the built React app from the build stage to the Nginx web root
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Expose port for the web server
 EXPOSE 80
 
 # Start nginx
