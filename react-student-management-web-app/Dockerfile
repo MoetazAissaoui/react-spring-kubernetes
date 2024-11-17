@@ -1,28 +1,20 @@
-# Use a newer Debian-based Node.js image (Buster or Bullseye)
-FROM node:12-buster as build
+# Use a more up-to-date Node.js base image
+FROM node:14-bullseye
 
-# Set working directory
-WORKDIR /app/
+# Set the working directory inside the container
+WORKDIR /app
 
-# Install app dependencies and build the React app
-COPY ./ /app/
-RUN yarn install
-RUN yarn build
+# Copy package.json and package-lock.json (or npm-shrinkwrap.json)
+COPY package*.json ./
 
-# Production stage
-FROM nginx:alpine
+# Install dependencies
+RUN npm install
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/sites-available/default
+# Copy the rest of the application files into the container
+COPY . .
 
-# Ensure nginx runs in the foreground
-RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf
+# Expose the port your app runs on
+EXPOSE 3000
 
-# Copy the built React app from the build stage to the Nginx web root
-COPY --from=build /app/build /usr/share/nginx/html
-
-# Expose port for the web server
-EXPOSE 80
-
-# Start nginx
-CMD ["nginx"]
+# Start the application
+CMD ["npm", "start"]
