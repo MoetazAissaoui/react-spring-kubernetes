@@ -1,31 +1,32 @@
-# base image
-FROM node:12
+# Use a newer base image with Node.js 16
+FROM node:16
 
-# set working directory
+# Set working directory
 WORKDIR /app/
 
-# add `/app/node_modules/.bin` to $PATH
+# Add `/app/node_modules/.bin` to $PATH
 ENV PATH /app/node_modules/.bin:$PATH
 
 # Install nginx
-RUN apt-get update
-RUN apt-get install nginx -y
+RUN apt-get update && apt-get install -y nginx
+
+# Configure nginx
 COPY nginx.conf /etc/nginx/sites-available/default
 RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf
 
-
-# install and cache app dependencies
+# Install app dependencies
 COPY ./ /app/
 RUN yarn install
-RUN ls
-RUN yarn 
 RUN yarn build
+
+# Copy the build files to the nginx public directory
 RUN cp -R build/* /var/www/html/
 
-# forward request and error logs to docker log collector
+# Forward request and error logs to Docker log collector
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
-	&& ln -sf /dev/stderr /var/log/nginx/error.log
+    && ln -sf /dev/stderr /var/log/nginx/error.log
 
 EXPOSE 80
-# start app
+
+# Start nginx
 CMD ["nginx"]
