@@ -16,3 +16,22 @@ frontend:
 ingress:
   enabled: true
   host: student-app.local
+  
+prometheus:
+  enabled: true
+  namespace: monitoring
+  releaseName: prometheus
+  replicas: 1
+  serviceMonitor:
+    enabled: true
+    namespaceSelector: {}
+
+grafana:
+  enabled: true
+  namespace: monitoring
+  releaseName: grafana
+  replicas: 1
+  adminPassword: admin # Change it for production
+  service:
+    type: ClusterIP
+    port: 3000

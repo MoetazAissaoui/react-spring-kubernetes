@@ -1,1 +1,1 @@
-kubectl port-forward svc/grafana 3000:80
+kubectl port-forward svc/grafana 3000:3000
