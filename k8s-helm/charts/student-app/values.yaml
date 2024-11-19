@@ -1,0 +1,18 @@
+replicaCount: 1
+
+mongo:
+  image: mongo:3.6.17-xenial
+  pvc:
+    storage: 256Mi
+
+backend:
+  image: nirajsonawane/student-app-api:0.0.1-SNAPSHOT
+  replicas: 1
+
+frontend:
+  image: nirajsonawane/student-app-client:latest
+  replicas: 1
+
+ingress:
+  enabled: true
+  host: student-app.local

@@ -1,0 +1,1 @@
+kubectl port-forward svc/student-app-api 9999:9999

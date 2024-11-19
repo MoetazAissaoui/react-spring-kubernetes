@@ -1,0 +1,1 @@
+kubectl port-forward svc/student-app-client-service 8888:8888

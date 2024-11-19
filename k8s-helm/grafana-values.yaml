@@ -1,0 +1,24 @@
+service:
+  type: NodePort
+  nodePort: 30030
+
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+    - grafana.local
+  pathType: ImplementationSpecific
+
+adminUser: admin
+adminPassword: admin
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://prometheus-server.default.svc.cluster.local:80
+        access: proxy
+        isDefault: true

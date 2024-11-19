@@ -1,0 +1,16 @@
+service:
+  type: NodePort
+  nodePort: 30000
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/metrics"
+    prometheus.io/port: "9090"
+
+server:
+  ingress:
+    enabled: true
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /
+    hosts:
+      - prometheus.local
+    pathType: ImplementationSpecific
