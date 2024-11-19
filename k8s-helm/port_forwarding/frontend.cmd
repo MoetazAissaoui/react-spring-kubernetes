@@ -1,1 +1,1 @@
-kubectl port-forward svc/student-app-client-service 8888:8888
+kubectl port-forward svc/student-app-client-service 8080:80

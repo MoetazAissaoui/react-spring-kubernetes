@@ -1,1 +1,1 @@
-kubectl port-forward svc/student-app-api 9999:9999
+kubectl port-forward svc/student-app-api 8081:8080
